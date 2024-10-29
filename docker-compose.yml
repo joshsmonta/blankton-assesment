@@ -1,12 +1,22 @@
 version: '3.8'
 
 services:
-  dashboard:
-    build: .
+  data_provider_service:
+    build:
+      context: ./data_provider_service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+
+  dashboard_service:
+    build:
+      context: ./dashboard_service
+      dockerfile: Dockerfile
     ports:
       - "8001:8001"
     depends_on:
       - redis
+      - data_provider_service
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
 
@@ -16,10 +26,12 @@ services:
       - "6379:6379"
 
   celery:
-    build: .
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
     command: celery -A dashboard_service worker --loglevel=info
     depends_on:
       - redis
-      - dashboard
+      - dashboard_service
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
