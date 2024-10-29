@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  dashboard:
+    build: .
+    ports:
+      - "8001:8001"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    command: celery -A dashboard_service worker --loglevel=info
+    depends_on:
+      - redis
+      - dashboard
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
