@@ -1,1 +1,50 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+*.env
+
+# Django specific files
+db.sqlite3
+*.sqlite3
+media/
+staticfiles/
+*.log
+
+# Migrations (only include migrations if you're sharing with team members)
+**/migrations/*
+
+# Ignore virtual environments
 venv/
+env/
+.virtualenv/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Ignore MacOS system files
+.DS_Store
+
+# Ignore Docker files and related artifacts
+*.log
+docker-compose.override.yml
+*.pid
+
+# Ignore coverage reports
+htmlcov/
+.coverage
+*.cover
+*.coverage.*
+
+# Ignore testing output
+junit-xml/
+test-results/
+
+# Pytest cache
+.pytest_cache/
