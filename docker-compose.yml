@@ -10,7 +10,7 @@ services:
 
   dashboard_service:
     build:
-      context: ./dashboard_service
+      context: ./dashboard
       dockerfile: Dockerfile
     ports:
       - "8001:8001"
