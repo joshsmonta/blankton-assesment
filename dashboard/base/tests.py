@@ -32,13 +32,13 @@ class SyncDashboardDataTests(TestCase):
         mock_get.return_value = mock_response
 
         # Call the function
-        sync_dashboard_data()
+        sync_dashboard_data("2024-01-01")
 
         # Assertions to check if requests.get was called with correct parameters
         yesterday = date.today() - timedelta(days=1)
         mock_get.assert_called_once_with(
-            'http://127.0.0.1:8000/events/',  # Replace with your actual URL
-            params={'limit': 1000, 'offset': 0, 'updated_gte': yesterday.strftime('%Y-%m-%d')}
+            'http://blankton_assesment-data_provider_service-1/events/',  # Replace with your actual URL
+            params={'limit': 1000, 'offset': 0, 'updated_gte': "2024-01-01"}
         )
 
         # Check that bulk_create was called with DashboardEvent objects

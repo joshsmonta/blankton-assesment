@@ -1,10 +1,21 @@
 import django
 import os
-from __future__ import absolute_import, unicode_literals
 from celery import Celery
-from django.conf import settings
-django.setup()
+from kombu import Queue
+from .settings import CELERY_BROKER_URL
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dashboard_service.settings')
 app = Celery('dashboard_service')
-app.config_from_object('django.conf:settings', namespace='CELERY')
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+app.autodiscover_tasks()
+app.conf.broker_url = CELERY_BROKER_URL
+app.conf.result_backend = CELERY_BROKER_URL
+app.conf.accept_content = ["application/json"]
+app.conf.task_serializer = "json"
+app.conf.result_serializer = "json"
+app.conf.task_default_queue = "default"
+app.conf.task_create_missing_queues = True
+app.conf.task_queues = (Queue("default"),)
+app.conf.broker_connection_timeout = 30
+app.conf.worker_prefetch_multiplier = 1
+app.conf.redbeat_redis_url = CELERY_BROKER_URL
+

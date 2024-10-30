@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import connection
 from datetime import datetime
+from .tasks import test_celery_task, sync_dashboard_data
 
 class DashboardView(APIView):
     def get(self, request):
@@ -93,3 +94,14 @@ class DashboardView(APIView):
             data = [dict(zip(columns, row)) for row in rows]
 
         return Response(data, status=status.HTTP_200_OK)
+
+class SyncDashboard(APIView):
+    def get(self, request):
+        try:
+            updated_gte = request.query_params.get('updated_gte')
+            sync_dashboard_data(updated_gte).delay()
+            return Response({"message": "data synced"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            # Convert the exception to a string
+            error_message = str(e)
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)

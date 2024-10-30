@@ -1,7 +1,7 @@
 from django.urls import path
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from .views import DashboardView
+from .views import DashboardView, SyncDashboard
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -15,6 +15,7 @@ schema_view = get_schema_view(
 )
 urlpatterns = [
     path('', DashboardView.as_view(), name='dashboard-view'),
+    path('sync/', SyncDashboard.as_view(), name='sync-dashboard'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
