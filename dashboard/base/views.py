@@ -37,18 +37,18 @@ class DashboardView(APIView):
                     COUNT(DISTINCT room_id) * 100.0 / (SELECT COUNT(*) FROM base_dashboardevent WHERE hotel_id = b.hotel_id) AS occupancy_rate
                 FROM
                     base_dashboardevent b
-                WHERE hotel_id = 2607
+                WHERE hotel_id = %s
                 GROUP BY 
                     hotel_id, night_of_stay
                 ORDER BY 
                     night_of_stay;
             """
-            params = [hotel_id, hotel_id, str(year)]
+            params = [hotel_id]
 
         elif period == 'month':
             query = """
                 SELECT 
-                    DATE_TRUNC('month', night_of_stay) AS month,
+                    strftime('%%m', night_of_stay) AS month,
                     COUNT(CASE WHEN rpg_status = 1 THEN 1 END) AS monthly_bookings,
                     COUNT(CASE WHEN rpg_status = 2 THEN 1 END) AS monthly_cancellations,
                     COUNT(DISTINCT room_id) AS unique_rooms_occupied,
@@ -56,7 +56,7 @@ class DashboardView(APIView):
                 FROM 
                     base_dashboardevent
                 WHERE
-                    hotel_id = %s AND strftime('%Y', night_of_stay) = %s
+                    hotel_id = %s AND strftime('%%Y', night_of_stay) = %s
                 GROUP BY 
                     hotel_id, month
                 ORDER BY 
@@ -67,7 +67,7 @@ class DashboardView(APIView):
         elif period == 'year':
             query = """
                 SELECT 
-                    DATE_TRUNC('year', night_of_stay) AS year,
+                    strftime('%%Y', night_of_stay) AS year,
                     COUNT(CASE WHEN rpg_status = 1 THEN 1 END) AS yearly_bookings,
                     COUNT(CASE WHEN rpg_status = 2 THEN 1 END) AS yearly_cancellations,
                     COUNT(DISTINCT room_id) AS unique_rooms_occupied,
@@ -75,7 +75,7 @@ class DashboardView(APIView):
                 FROM 
                     base_dashboardevent
                 WHERE
-                    hotel_id = %s AND strftime('%Y', night_of_stay) = %s
+                    hotel_id = %s AND strftime('%%Y', night_of_stay) = %s
                 GROUP BY 
                     hotel_id, year
                 ORDER BY 
@@ -97,11 +97,11 @@ class DashboardView(APIView):
 
 class SyncDashboard(APIView):
     def get(self, request):
-        try:
-            updated_gte = request.query_params.get('updated_gte')
-            sync_dashboard_data(updated_gte).delay()
-            return Response({"message": "data synced"}, status=status.HTTP_200_OK)
-        except Exception as e:
-            # Convert the exception to a string
-            error_message = str(e)
-            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        # try:
+        updated_gte = request.query_params.get('updated_gte')
+        sync_dashboard_data.delay(updated_gte)
+        return Response({"message": "data synced"}, status=status.HTTP_200_OK)
+        # except Exception as e:
+        #     # Convert the exception to a string
+        #     error_message = str(e)
+        #     return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
