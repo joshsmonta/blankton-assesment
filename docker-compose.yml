@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   data_provider_service:
+    container_name: data-provider-service
     build:
       context: ./data_provider_service
       dockerfile: Dockerfile
@@ -9,6 +10,7 @@ services:
       - "8000:8000"
 
   dashboard_service:
+    container_name: dashboard-service
     build:
       context: ./dashboard
       dockerfile: Dockerfile
@@ -21,6 +23,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
 
   redis:
+    container_name: redis
     image: redis:latest
     ports:
       - "6379:6379"

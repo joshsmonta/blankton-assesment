@@ -69,10 +69,6 @@ class EventViewSetTests(TestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_get_events_invalid_limit_and_offset(self):
-        # Test missing limit and offset
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
         # Test non-integer limit and offset
         response = self.client.get(self.url, {
             'limit': 'abc',

@@ -20,8 +20,8 @@ with open('/Users/emmanuel/Downloads/data.csv', 'r') as csv_file:
         except sqlite3.IntegrityError as e:
             print(f"Skipping row {row[0]}: {e}")
 
-# Commit the transaction
+
 connection.commit()
 
-# Close the connection
+
 connection.close()

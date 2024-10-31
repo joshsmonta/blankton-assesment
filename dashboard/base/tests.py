@@ -11,7 +11,7 @@ from unittest.mock import patch
 from rest_framework import status
 from rest_framework.test import APIClient
 from .models import DashboardEvent
-from datetime import datetime
+from dashboard_service.settings import DATA_PROVIDER_URL
 
 class DashboardViewTests(TestCase):
     def setUp(self):
@@ -105,8 +105,8 @@ class SyncDashboardDataTests(TestCase):
         # Assertions to check if requests.get was called with correct parameters
         yesterday = date.today() - timedelta(days=1)
         mock_get.assert_called_once_with(
-            'http://blankton_assesment-data_provider_service-1:8000/events/',  # Replace with your actual URL
-            params={'limit': 10000, 'offset': 0, 'updated_gte': "2024-01-01"}
+            f"{DATA_PROVIDER_URL}/events/",  # Replace with your actual URL
+            params={'updated_gte': "2024-01-01"}
         )
 
         # Check that bulk_create was called with DashboardEvent objects

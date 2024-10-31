@@ -99,9 +99,11 @@ class SyncDashboard(APIView):
     def get(self, request):
         # try:
         updated_gte = request.query_params.get('updated_gte')
-        sync_dashboard_data.delay(updated_gte)
+        if not updated_gte:
+            return Response({'message': 'updated_gte parameters are required'}, status=status.HTTP_400_BAD_REQUEST)
+        sync_dashboard_data(updated_gte)
         return Response({"message": "data synced"}, status=status.HTTP_200_OK)
         # except Exception as e:
         #     # Convert the exception to a string
         #     error_message = str(e)
-        #     return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        #     return Response(error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

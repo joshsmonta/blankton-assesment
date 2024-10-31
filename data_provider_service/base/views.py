@@ -19,16 +19,6 @@ class EventViewSet(APIView):
         limit = request.query_params.get('limit')
         offset = request.query_params.get('offset')
 
-        # Validate limit and offset parameters
-        if not limit or not offset:
-            return Response({'message': 'limit and offset params are required'}, status=400)
-
-        try:
-            limit = int(limit)
-            offset = int(offset)
-        except ValueError:
-            return Response({'message': 'limit and offset must be integers'}, status=400)
-
         # Start with all events and apply ordering
         events = Event.objects.all().order_by('timestamp')
 
@@ -57,11 +47,23 @@ class EventViewSet(APIView):
                 events = events.filter(night_of_stay__lte=parsed_night_of_stay_lte)
 
         # Apply limit and offset after all filters
-        events = events[offset:offset + limit]
+        # Validate limit and offset parameters
+        if limit and offset:
+            try:
+                limit = int(limit)
+                offset = int(offset)
+            except ValueError:
+                return Response({'message': 'limit and offset must be integers'}, status=400)
+            events = events[offset:offset + limit]
 
-        # Serialize the filtered events
-        serializer = EventSerializer(events, many=True)
-        return Response(serializer.data)
+            # Serialize the filtered events
+            serializer = EventSerializer(events, many=True)
+            return Response(serializer.data)
+        else:
+            # Serialize the filtered events
+            serializer = EventSerializer(events, many=True)
+            return Response(serializer.data)
+            
 
 
     def post(self, request):

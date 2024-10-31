@@ -14,6 +14,7 @@ class DashboardEvent(models.Model):
     rpg_status = models.IntegerField(choices=RPG_STATUS_CHOICES)
     timestamp = models.DateTimeField()
     hotel_id = models.CharField(max_length=36)
+    
 
     def __str__(self):
         return f"Event {self.id} - Hotel {self.hotel_id}"

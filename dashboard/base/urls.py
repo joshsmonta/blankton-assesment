@@ -14,8 +14,8 @@ schema_view = get_schema_view(
    public=True,
 )
 urlpatterns = [
-    path('', DashboardView.as_view(), name='dashboard-view'),
-    path('sync/', SyncDashboard.as_view(), name='sync-dashboard'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('dashboard/sync/', SyncDashboard.as_view(), name='sync-dashboard'),
+    path('dashboard/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('dashboard/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-ocrw7nwzcp3_2u=w=1iv_db00#klm5d%a)&p%#g$jyo^nfs8=b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'data-provider-service'
+]
 
 
 # Application definition
@@ -126,9 +130,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-CELERY_BROKER_URL = 'redis://blankton_assesment-redis-1:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
+DATA_PROVIDER_URL = 'http://data-provider-service:8000'
+
 

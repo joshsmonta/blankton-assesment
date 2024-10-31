@@ -15,7 +15,7 @@ staticfiles/
 *.log
 
 # Migrations (only include migrations if you're sharing with team members)
-**/migrations/*
+# **/migrations/*
 
 # Ignore virtual environments
 venv/
