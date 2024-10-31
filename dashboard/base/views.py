@@ -101,8 +101,8 @@ class SyncDashboard(APIView):
         updated_gte = request.query_params.get('updated_gte')
         if not updated_gte:
             return Response({'message': 'updated_gte parameters are required'}, status=status.HTTP_400_BAD_REQUEST)
-        sync_dashboard_data(updated_gte)
-        return Response({"message": "data synced"}, status=status.HTTP_200_OK)
+        sync_dashboard_data.delay(updated_gte)
+        return Response({"message": "task sent to queue for processing"}, status=status.HTTP_200_OK)
         # except Exception as e:
         #     # Convert the exception to a string
         #     error_message = str(e)

@@ -18,4 +18,4 @@ COPY create_superuser.py /app/create_superuser.py
 RUN python manage.py migrate && \
     python manage.py shell < create_superuser.py
 
-CMD ["sh", "-c", "python3 manage.py test && python3 manage.py runserver 0.0.0.0:8001"]
+CMD ["sh", "-c", "python3 manage.py test && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8001"]

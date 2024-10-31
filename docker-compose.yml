@@ -29,6 +29,7 @@ services:
       - "6379:6379"
 
   celery:
+    container_name: celery-instance
     build:
       context: ./dashboard
       dockerfile: Dockerfile
@@ -36,5 +37,7 @@ services:
     depends_on:
       - redis
       - dashboard_service
+      - data_provider_service
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - C_FORCE_ROOT=true

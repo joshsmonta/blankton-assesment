@@ -103,9 +103,11 @@ class SyncDashboardDataTests(TestCase):
         sync_dashboard_data("2024-01-01")
 
         # Assertions to check if requests.get was called with correct parameters
+        # data_url = "http://192.168.128.3:8000/events/"
+        data_url = f"{DATA_PROVIDER_URL}/events/"
         yesterday = date.today() - timedelta(days=1)
         mock_get.assert_called_once_with(
-            f"{DATA_PROVIDER_URL}/events/",  # Replace with your actual URL
+            data_url,  # Replace with your actual URL
             params={'updated_gte': "2024-01-01"}
         )
 
