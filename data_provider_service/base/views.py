@@ -1,12 +1,29 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Event
-from .serializers import EventSerializer
+from .serializers import EventSerializer, EventFields
 from django.utils.dateparse import parse_datetime, parse_date
+from .swagger import *
 
 
 class EventViewSet(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            hotel_id_param, 
+            timestamp_gte_param, 
+            timestamp_lte_param, 
+            rpg_status_param, 
+            room_id_param, 
+            night_of_stay_gte_param, 
+            night_of_stay_lte_param, 
+            limit_param, 
+            offset_param
+        ],
+        operation_description="Get events using this endpoint.",
+        responses={200: EventSerializer}
+    )
     def get(self, request):
         # Get query parameters
         hotel_id = request.query_params.get('hotel_id')
@@ -65,7 +82,11 @@ class EventViewSet(APIView):
             return Response(serializer.data)
             
 
-
+    @swagger_auto_schema(
+        request_body=EventSerializer,
+        operation_description="Create Events using this endpoint.",
+        responses={201: EventSerializer}
+    )
     def post(self, request):
         # Deserialize the data to create a new event
         serializer = EventSerializer(data=request.data)

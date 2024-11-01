@@ -1,11 +1,18 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import connection, transaction, IntegrityError
 from datetime import datetime
 from .tasks import test_celery_task, sync_dashboard_data
+from .swagger import hotel_id_param, period_param, year_param, updated_gte_param
+
 
 class DashboardView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[hotel_id_param, period_param, year_param],
+        operation_description="Get dashboard data using this endpoint.",
+    )
     def get(self, request):
         # Get query parameters
         hotel_id = request.query_params.get('hotel_id')
@@ -96,6 +103,10 @@ class DashboardView(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 class SyncDashboard(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[updated_gte_param],
+        operation_description="Sync dashboard manually from data provider service",
+    )
     def get(self, request):
         try:
             updated_gte = request.query_params.get('updated_gte')

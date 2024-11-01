@@ -21,6 +21,8 @@ services:
       - data_provider_service
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - dashboard-data:/app
 
   redis:
     container_name: redis
@@ -41,7 +43,9 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - C_FORCE_ROOT=true
+    volumes:
+      - dashboard-data:/app
     
-  volumes:
-    dashboard_data:
-    
+volumes:
+  dashboard-data:
+
