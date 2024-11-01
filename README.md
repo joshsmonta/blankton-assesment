@@ -11,6 +11,13 @@ docker-compose build
 docker-compose up -d
 ```
 
+## Django Admin Credentials
+
+```bash
+username: admin
+password: admin
+```
+
 <!-- ## Usage
 
 ```python
