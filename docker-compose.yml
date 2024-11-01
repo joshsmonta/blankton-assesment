@@ -33,7 +33,7 @@ services:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
-    command: celery -A dashboard_service worker --loglevel=info
+    command: celery -A dashboard_service worker -l DEBUG --loglevel=info
     depends_on:
       - redis
       - dashboard_service
@@ -41,3 +41,7 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - C_FORCE_ROOT=true
+    
+  volumes:
+    dashboard_data:
+    

@@ -1,7 +1,7 @@
 import requests
 import logging
 from celery import shared_task
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from .models import DashboardEvent
 from dashboard_service.settings import DATA_PROVIDER_URL
 from datetime import date, timedelta
@@ -48,16 +48,22 @@ def sync_dashboard_data(updated_gte: str):
         ]
 
         # Step 4: Batch insert new records to optimize database performance
-        # batch_size = 1000
         if dashboard_events:
-            DashboardEvent.objects.bulk_create(dashboard_events)
-            logger.info("Sync task complete: %d new events added.", len(dashboard_events))
+            try:
+                with transaction.atomic():
+                    DashboardEvent.objects.bulk_create(dashboard_events, batch_size=1000)
+                    logger.info("Sync task complete: %d new events added.", len(dashboard_events))
+            except IntegrityError as e:
+                logger.error(f"Request error: {str(e)}")
+                raise BaseException(e)
         else:
             logger.info("No new events to add.")
     except requests.RequestException as e:
         logger.error(f"Request error: {str(e)}")
+        raise BaseException(e)
     except Exception as e:
         logger.error(f"An error occurred in sync_dashboard_data: {str(e)}")
+        raise BaseException(e)
 
     
 @shared_task(name="test_celery_task")

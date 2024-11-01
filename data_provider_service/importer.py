@@ -6,7 +6,7 @@ connection = sqlite3.connect('db.sqlite3')
 cursor = connection.cursor()
 
 # Open the CSV file
-with open('/Users/emmanuel/Downloads/data.csv', 'r') as csv_file:
+with open('data.csv', 'r') as csv_file:
     csv_reader = csv.reader(csv_file)
     next(csv_reader)  # Skip the header row
 

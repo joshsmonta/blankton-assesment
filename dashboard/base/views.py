@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db import connection
+from django.db import connection, transaction, IntegrityError
 from datetime import datetime
 from .tasks import test_celery_task, sync_dashboard_data
 
@@ -97,13 +97,16 @@ class DashboardView(APIView):
 
 class SyncDashboard(APIView):
     def get(self, request):
-        # try:
-        updated_gte = request.query_params.get('updated_gte')
-        if not updated_gte:
-            return Response({'message': 'updated_gte parameters are required'}, status=status.HTTP_400_BAD_REQUEST)
-        sync_dashboard_data.delay(updated_gte)
-        return Response({"message": "task sent to queue for processing"}, status=status.HTTP_200_OK)
-        # except Exception as e:
-        #     # Convert the exception to a string
-        #     error_message = str(e)
-        #     return Response(error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        try:
+            updated_gte = request.query_params.get('updated_gte')
+            if not updated_gte:
+                return Response({'message': 'updated_gte parameters are required'}, status=status.HTTP_400_BAD_REQUEST)
+            transaction.on_commit(lambda: sync_dashboard_data.delay(updated_gte))
+            return Response({"message": "task sent to queue for processing"}, status=status.HTTP_200_OK)
+        except IntegrityError as e:
+            error_message = str(e)
+            return Response(error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            # Convert the exception to a string
+            error_message = str(e)
+            return Response(error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
