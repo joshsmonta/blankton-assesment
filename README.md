@@ -18,6 +18,13 @@ username: admin
 password: admin
 ```
 
+## Swagger Docs
+
+```bash
+http://127.0.0.1:8000/events/swagger/
+http://127.0.0.1:8001/dashboard/swagger/
+```
+
 <!-- ## Usage
 
 ```python
